@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       const permissionRequest = await db.permissionRequests.create(
         userPayload.userId,
         recipient.id,
+        null, // recipientEmail - null since we have the user ID
         context
       );
       
@@ -96,18 +97,17 @@ export async function POST(request: NextRequest) {
         });
       }
       
-      // Create request with email instead of user ID (longer expiration for pending signups)
-      const result = await db.query(
-        `INSERT INTO permission_requests 
-         (requester_id, recipient_email, meeting_context, status, expires_at, created_at)
-         VALUES ($1, $2, $3, 'pending', CURRENT_TIMESTAMP + INTERVAL '30 days', CURRENT_TIMESTAMP)
-         RETURNING *`,
-        [userPayload.userId, recipient_email, context || null]
+      // Create request with email instead of user ID
+      const permissionRequest = await db.permissionRequests.create(
+        userPayload.userId,
+        null, // recipientId - null since user doesn't exist yet
+        recipient_email, // recipientEmail - store for when they sign up
+        context
       );
       
       return NextResponse.json({
         message: 'Request sent (user will receive it when they sign up)',
-        request: result.rows[0],
+        request: permissionRequest,
         pending_signup: true,
       });
     }

@@ -99,7 +99,9 @@ export async function POST(request: NextRequest) {
       for (const participant of needsPermission) {
         const request = await db.permissionRequests.create(
           userPayload.userId,
-          participant.id
+          participant.id,
+          null, // recipientEmail - null since we have the user ID
+          `Meeting coordination request` // context
         );
         
         await db.notifications.create(
@@ -110,9 +112,9 @@ export async function POST(request: NextRequest) {
           `/permissions/approve/${request.id}`
         );
         
-        // Update status
+        // Update status with type assertion for dynamic property
         participant.status = 'pending_approval';
-        participant.requestId = request.id;
+        (participant as any).requestId = request.id;
       }
     }
     

@@ -5,8 +5,12 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Booker - Cross-Organization Calendar Availability",
+  title: "Booker Pro - Cross-Organization Calendar Availability",
   description: "Find meeting times across teams and organizations instantly",
+  icons: {
+    icon: "/logo-icon.png",
+    apple: "/logo-icon.png",
+  },
 };
 
 export default function RootLayout({

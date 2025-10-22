@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { Calendar, Users, Shield, Moon, Sun } from "lucide-react";
@@ -12,8 +13,17 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-900 transition-colors">
       {/* Header */}
       <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b dark:border-gray-700">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">Booker</h1>
+        <div className="container mx-auto px-4 py-1 flex justify-between items-center">
+          <Link href="/" className="flex items-center">
+            <Image 
+              src="/logo-full.png" 
+              alt="Booker Pro" 
+              width={450} 
+              height={180}
+              className="h-24 w-auto"
+              priority
+            />
+          </Link>
           <div className="flex gap-3 items-center">
             <Button variant="ghost" size="sm" onClick={toggleTheme}>
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}

@@ -393,14 +393,12 @@ export const db = {
   
   // Permission requests queries
   permissionRequests: {
-    create: async (requesterId: number, recipientId: number, context?: string): Promise<PermissionRequest> => {
+    create: async (requesterId: number, recipientId: number | null, recipientEmail: string | null, context?: string): Promise<PermissionRequest> => {
       const result = await pool.query<PermissionRequest>(
-        `INSERT INTO permission_requests (requester_id, recipient_id, meeting_context)
-         VALUES ($1, $2, $3)
-         ON CONFLICT (requester_id, recipient_id, status)
-         DO UPDATE SET created_at = CURRENT_TIMESTAMP
+        `INSERT INTO permission_requests (requester_id, recipient_id, recipient_email, meeting_context)
+         VALUES ($1, $2, $3, $4)
          RETURNING *`,
-        [requesterId, recipientId, context || null]
+        [requesterId, recipientId, recipientEmail, context || null]
       );
       return result.rows[0];
     },

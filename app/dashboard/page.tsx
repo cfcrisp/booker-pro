@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -278,7 +279,16 @@ export default function DashboardPage() {
       {/* Header */}
       <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b dark:border-gray-700 sticky top-0 z-50 transition-colors">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">Booker</h1>
+          <Link href="/dashboard" className="flex items-center">
+            <Image 
+              src="/logo-full.png" 
+              alt="Booker Pro" 
+              width={350} 
+              height={140}
+              className="h-16 w-auto"
+              priority
+            />
+          </Link>
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600 dark:text-gray-300">{user.name}</span>
             <Button variant="ghost" size="sm" onClick={toggleTheme} title="Toggle theme">
