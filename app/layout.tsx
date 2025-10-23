@@ -5,11 +5,11 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Booker Pro - Cross-Organization Calendar Availability",
-  description: "Find meeting times across teams and organizations instantly",
+  title: "Booker - Availability Made Easy",
+  description: "The fastest way to share calendar availability",
   icons: {
-    icon: "/logo-icon.png",
-    apple: "/logo-icon.png",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 

@@ -12,8 +12,8 @@ export default function RegisterPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <p className="text-gray-600">Redirecting to sign in...</p>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <p className="text-slate-600 dark:text-slate-400">Redirecting to sign in...</p>
     </div>
   );
 }

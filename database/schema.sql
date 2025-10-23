@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
   name VARCHAR(255) NOT NULL,
   google_id VARCHAR(255) UNIQUE, -- Google user ID for Sign in with Google
   timezone VARCHAR(100) DEFAULT 'America/New_York',
+  buffer_minutes INTEGER DEFAULT 30,
+  show_weekends BOOLEAN DEFAULT FALSE,
+  calendar_start_today BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -46,36 +49,13 @@ CREATE TABLE IF NOT EXISTS blocked_times (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Meetings table
-CREATE TABLE IF NOT EXISTS meetings (
-  id SERIAL PRIMARY KEY,
-  coordinator_id INTEGER NOT NULL REFERENCES users(id),
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  start_time TIMESTAMP NOT NULL,
-  end_time TIMESTAMP NOT NULL,
-  status VARCHAR(50) DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Meeting participants table
-CREATE TABLE IF NOT EXISTS meeting_participants (
-  id SERIAL PRIMARY KEY,
-  meeting_id INTEGER NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  status VARCHAR(50) DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(meeting_id, user_id)
-);
-
 -- Calendar access permissions table
 CREATE TABLE IF NOT EXISTS calendar_permissions (
   id SERIAL PRIMARY KEY,
   grantor_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   grantee_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
   grantee_domain VARCHAR(255) NULL,
-  permission_type VARCHAR(20) NOT NULL CHECK (permission_type IN ('once', 'user', 'domain')),
+  permission_type VARCHAR(20) NOT NULL CHECK (permission_type IN ('user', 'domain')),
   status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'revoked')),
   expires_at TIMESTAMP NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -117,9 +97,6 @@ CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user_id ON oauth_tokens(user_id);
 CREATE INDEX IF NOT EXISTS idx_availability_rules_user_id ON availability_rules(user_id);
 CREATE INDEX IF NOT EXISTS idx_blocked_times_user_id ON blocked_times(user_id);
-CREATE INDEX IF NOT EXISTS idx_meetings_coordinator_id ON meetings(coordinator_id);
-CREATE INDEX IF NOT EXISTS idx_meeting_participants_meeting_id ON meeting_participants(meeting_id);
-CREATE INDEX IF NOT EXISTS idx_meeting_participants_user_id ON meeting_participants(user_id);
 CREATE INDEX IF NOT EXISTS idx_calendar_permissions_grantor ON calendar_permissions(grantor_id);
 CREATE INDEX IF NOT EXISTS idx_calendar_permissions_grantee ON calendar_permissions(grantee_id);
 CREATE INDEX IF NOT EXISTS idx_calendar_permissions_domain ON calendar_permissions(grantee_domain);

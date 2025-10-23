@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTokensFromCode, getUserInfo } from '@/lib/google-calendar';
 import { db, createDefaultAvailabilityRules } from '@/lib/db';
 import { generateToken, createAuthCookie } from '@/lib/auth';
+import { updateDomainStats, incrementCalendarConnection } from '@/lib/domain-stats';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -53,6 +54,9 @@ export async function GET(request: NextRequest) {
           // Create default availability rules (Mon-Fri 9am-5pm)
           await createDefaultAvailabilityRules(user.id, timezone);
           
+          // Update domain stats (new user with calendar connected)
+          await updateDomainStats(userInfo.email, true);
+          
           // Check for any pending permission requests sent to this email before signup
           const pendingRequests = await db.query(
             `UPDATE permission_requests 
@@ -103,6 +107,12 @@ export async function GET(request: NextRequest) {
       // Calendar connection flow (existing user)
       const { userId } = stateData;
       
+      // Check if this is first time connecting calendar
+      const existingToken = await db.query(
+        'SELECT id FROM oauth_tokens WHERE user_id = $1 AND provider = $2',
+        [userId, 'google']
+      );
+      
       await db.oauthTokens.upsert(
         userId,
         'google',
@@ -110,6 +120,14 @@ export async function GET(request: NextRequest) {
         tokens.refresh_token || null,
         tokens.expiry_date ? new Date(tokens.expiry_date) : null
       );
+      
+      // If first time connecting, update domain stats
+      if (existingToken.rows.length === 0) {
+        const userResult = await db.query('SELECT email FROM users WHERE id = $1', [userId]);
+        if (userResult.rows.length > 0) {
+          await incrementCalendarConnection(userResult.rows[0].email);
+        }
+      }
       
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=google_connected`

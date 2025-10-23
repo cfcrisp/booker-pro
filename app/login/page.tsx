@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTheme } from "@/hooks/use-theme";
@@ -23,24 +22,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-900 transition-colors px-4">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 transition-colors px-4 relative overflow-hidden">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/40 dark:bg-blue-950/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-100/40 dark:bg-purple-950/40 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="absolute top-4 right-4 z-10">
         <Button variant="ghost" size="sm" onClick={toggleTheme}>
           {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </Button>
       </div>
 
-      <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700">
+      <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700 relative z-10">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-6">
-            <Image 
-              src="/logo-icon.png" 
-              alt="Booker Pro" 
-              width={200} 
-              height={200}
-              className="w-48 h-48"
-              priority
-            />
+            <svg width="96" height="96" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="10" rx="2" className="fill-slate-700 dark:fill-slate-300" />
+              <rect x="18" y="4" width="10" height="10" rx="2" className="fill-slate-500 dark:fill-slate-400" opacity="0.7" />
+              <rect x="4" y="18" width="10" height="10" rx="2" className="fill-slate-500 dark:fill-slate-400" opacity="0.7" />
+              <rect x="18" y="18" width="10" height="10" rx="2" className="fill-slate-400 dark:fill-slate-500" opacity="0.5" />
+            </svg>
           </div>
           <CardTitle className="text-3xl font-bold dark:text-gray-100">Welcome to Booker</CardTitle>
           <CardDescription className="text-base mt-2 dark:text-gray-300">

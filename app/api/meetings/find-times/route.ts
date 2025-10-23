@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
     // Check permissions and calendar connections for all participants
     const participantStatuses = await Promise.all(
       participants.map(async (participant) => {
+        // Skip permission check if it's the requester themselves
+        if (participant.id === userPayload.userId) {
+          const token = await db.oauthTokens.findByUserId(participant.id, 'google');
+          return {
+            ...participant,
+            status: token ? 'ready' : 'no_calendar',
+            hasPermission: true, // Always have permission for your own calendar
+          };
+        }
+        
         // Check if participant has Google Calendar connected
         const token = await db.oauthTokens.findByUserId(participant.id, 'google');
         if (!token) {
@@ -109,7 +119,7 @@ export async function POST(request: NextRequest) {
           'permission_request',
           `${requester?.name} wants to see your calendar`,
           `${requester?.name} (${requester?.email}) has requested access to view your calendar availability.`,
-          `/permissions/approve/${request.id}`
+          '/permissions/requests'
         );
         
         // Update status with type assertion for dynamic property
@@ -147,7 +157,7 @@ export async function POST(request: NextRequest) {
     );
     
     // Find common available slots among authorized participants
-    const availableSlots = findCommonAvailability(
+    const availableSlots = await findCommonAvailability(
       freeBusyData,
       startDate,
       endDate,

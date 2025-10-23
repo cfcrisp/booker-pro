@@ -7,9 +7,10 @@ interface EmailInputProps {
   onChange: (emails: string[]) => void;
   placeholder?: string;
   className?: string;
+  userEmail?: string;
 }
 
-export function EmailInput({ emails, onChange, placeholder, className }: EmailInputProps) {
+export function EmailInput({ emails, onChange, placeholder, className, userEmail }: EmailInputProps) {
   const [inputValue, setInputValue] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -73,7 +74,7 @@ export function EmailInput({ emails, onChange, placeholder, className }: EmailIn
           key={email}
           className="inline-flex items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"
         >
-          {email}
+          {email === userEmail ? "You" : email}
           <button
             type="button"
             onClick={(e) => {

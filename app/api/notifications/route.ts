@@ -38,14 +38,14 @@ export async function POST(request: NextRequest) {
   try {
     const { action, notification_id } = await request.json();
     
-    if (action === 'mark_read') {
-      if (notification_id) {
-        await db.notifications.markAsRead(notification_id, userPayload.userId);
-      } else {
-        await db.notifications.markAllAsRead(userPayload.userId);
-      }
-      
+    if (action === 'mark_read' && notification_id) {
+      await db.notifications.markAsRead(notification_id, userPayload.userId);
       return NextResponse.json({ message: 'Marked as read' });
+    }
+    
+    if (action === 'mark_all_read') {
+      await db.notifications.markAllAsRead(userPayload.userId);
+      return NextResponse.json({ message: 'All marked as read' });
     }
     
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

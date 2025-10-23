@@ -14,6 +14,8 @@ export interface User {
   name: string;
   google_id: string | null;
   timezone: string;
+  buffer_minutes: number;
+  show_weekends: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -50,32 +52,12 @@ export interface BlockedTime {
   updated_at: Date;
 }
 
-export interface Meeting {
-  id: number;
-  coordinator_id: number;
-  title: string;
-  description: string | null;
-  start_time: Date;
-  end_time: Date;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-export interface MeetingParticipant {
-  id: number;
-  meeting_id: number;
-  user_id: number;
-  status: string;
-  created_at: Date;
-}
-
 export interface CalendarPermission {
   id: number;
   grantor_id: number;
   grantee_id: number | null;
   grantee_domain: string | null;
-  permission_type: 'once' | 'user' | 'domain';
+  permission_type: 'user' | 'domain';
   status: 'active' | 'revoked';
   expires_at: Date | null;
   created_at: Date;
@@ -278,58 +260,6 @@ export const db = {
     },
   },
   
-  // Meetings queries
-  meetings: {
-    findById: async (id: number): Promise<Meeting | null> => {
-      const result = await pool.query<Meeting>(
-        'SELECT * FROM meetings WHERE id = $1',
-        [id]
-      );
-      return result.rows[0] || null;
-    },
-    
-    findByCoordinatorId: async (coordinatorId: number): Promise<Meeting[]> => {
-      const result = await pool.query<Meeting>(
-        'SELECT * FROM meetings WHERE coordinator_id = $1 ORDER BY start_time DESC',
-        [coordinatorId]
-      );
-      return result.rows;
-    },
-    
-    create: async (
-      coordinatorId: number,
-      title: string,
-      description: string | null,
-      startTime: Date,
-      endTime: Date
-    ): Promise<Meeting> => {
-      const result = await pool.query<Meeting>(
-        'INSERT INTO meetings (coordinator_id, title, description, start_time, end_time) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [coordinatorId, title, description, startTime, endTime]
-      );
-      return result.rows[0];
-    },
-  },
-  
-  // Meeting participants queries
-  meetingParticipants: {
-    addParticipant: async (meetingId: number, userId: number): Promise<MeetingParticipant> => {
-      const result = await pool.query<MeetingParticipant>(
-        'INSERT INTO meeting_participants (meeting_id, user_id) VALUES ($1, $2) RETURNING *',
-        [meetingId, userId]
-      );
-      return result.rows[0];
-    },
-    
-    findByMeetingId: async (meetingId: number): Promise<MeetingParticipant[]> => {
-      const result = await pool.query<MeetingParticipant>(
-        'SELECT * FROM meeting_participants WHERE meeting_id = $1',
-        [meetingId]
-      );
-      return result.rows;
-    },
-  },
-  
   // Calendar permissions queries
   permissions: {
     hasPermission: async (grantorId: number, granteeId: number): Promise<boolean> => {
@@ -363,14 +293,6 @@ export const db = {
       const result = await pool.query<CalendarPermission>(
         'INSERT INTO calendar_permissions (grantor_id, grantee_domain, permission_type) VALUES ($1, $2, $3) RETURNING *',
         [grantorId, domain, 'domain']
-      );
-      return result.rows[0];
-    },
-    
-    grantOncePermission: async (grantorId: number, granteeId: number, expiresAt: Date): Promise<CalendarPermission> => {
-      const result = await pool.query<CalendarPermission>(
-        'INSERT INTO calendar_permissions (grantor_id, grantee_id, permission_type, expires_at) VALUES ($1, $2, $3, $4) RETURNING *',
-        [grantorId, granteeId, 'once', expiresAt]
       );
       return result.rows[0];
     },

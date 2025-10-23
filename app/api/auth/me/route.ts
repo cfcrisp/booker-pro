@@ -41,18 +41,48 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { timezone } = body;
+    const { timezone, buffer_minutes, show_weekends, calendar_start_today } = body;
 
-    if (!timezone) {
-      return NextResponse.json({ error: 'Timezone is required' }, { status: 400 });
+    // Update timezone if provided
+    if (timezone) {
+      await db.users.updateTimezone(payload.userId, timezone);
     }
 
-    const user = await db.users.updateTimezone(payload.userId, timezone);
+    // Update buffer minutes if provided
+    if (buffer_minutes !== undefined) {
+      await db.query(
+        'UPDATE users SET buffer_minutes = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        [buffer_minutes, payload.userId]
+      );
+    }
+
+    // Update show_weekends if provided
+    if (show_weekends !== undefined) {
+      await db.query(
+        'UPDATE users SET show_weekends = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        [show_weekends, payload.userId]
+      );
+    }
+
+    // Update calendar_start_today if provided
+    if (calendar_start_today !== undefined) {
+      await db.query(
+        'UPDATE users SET calendar_start_today = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+        [calendar_start_today, payload.userId]
+      );
+    }
+
+    // Fetch updated user
+    const user = await db.users.findById(payload.userId);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const { password_hash, ...userWithoutPassword } = user;
 
     return NextResponse.json({ user: userWithoutPassword });
   } catch (error) {
-    console.error('Update timezone error:', error);
-    return NextResponse.json({ error: 'Failed to update timezone' }, { status: 500 });
+    console.error('Update user settings error:', error);
+    return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
   }
 }

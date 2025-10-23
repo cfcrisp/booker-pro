@@ -68,58 +68,51 @@ export function NotificationsPanel() {
 
   return (
     <Card className="dark:bg-gray-800 dark:border-gray-700">
-      <CardHeader>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 dark:text-gray-300" />
-            <CardTitle className="dark:text-gray-100">Notifications</CardTitle>
+            <Bell className="w-4 h-4 dark:text-gray-300" />
+            <CardTitle className="text-base dark:text-gray-100">Notifications</CardTitle>
             {unreadCount > 0 && (
-              <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+              <span className="bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-full">
                 {unreadCount}
               </span>
             )}
           </div>
           {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-              <Check className="w-4 h-4 mr-1" />
+            <Button variant="ghost" size="sm" onClick={markAllAsRead} className="h-7 text-xs">
+              <Check className="w-3 h-3 mr-1" />
               Mark all read
             </Button>
           )}
         </div>
-        <CardDescription className="dark:text-gray-400">Recent activity and permission requests</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {isLoading ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-xs text-gray-500">Loading...</p>
         ) : notifications.length === 0 ? (
-          <div className="space-y-3 text-sm text-gray-500 dark:text-gray-400">
-            <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-              <p className="font-medium text-gray-700 dark:text-gray-200">🎉 You're all caught up!</p>
-              <p className="text-xs mt-1 dark:text-gray-300">Notifications will appear here when:</p>
-              <ul className="text-xs mt-2 space-y-1 ml-4 list-disc dark:text-gray-300">
-                <li>Someone requests calendar access</li>
-                <li>A permission is approved or denied</li>
-                <li>A meeting is scheduled</li>
-              </ul>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+              <p className="font-medium text-gray-700 dark:text-gray-200">🎉 All caught up!</p>
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {notifications.slice(0, 5).map((notification) => (
               <div
                 key={notification.id}
-                className={`p-3 rounded-lg border ${
+                className={`p-2 rounded border ${
                   notification.read 
                     ? "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600" 
                     : "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm dark:text-gray-100">{notification.title}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{notification.message}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                      {format(new Date(notification.created_at), "MMM d, yyyy 'at' h:mm a")}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-xs dark:text-gray-100 truncate">{notification.title}</h4>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5 line-clamp-2">{notification.message}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                      {format(new Date(notification.created_at), "MMM d 'at' h:mm a")}
                     </p>
                   </div>
                   {!notification.read && (
@@ -127,16 +120,16 @@ export function NotificationsPanel() {
                       variant="ghost"
                       size="sm"
                       onClick={() => markAsRead(notification.id)}
-                      className="shrink-0"
+                      className="shrink-0 h-6 w-6 p-0"
                     >
-                      <Check className="w-4 h-4" />
+                      <Check className="w-3 h-3" />
                     </Button>
                   )}
                 </div>
                 {notification.link && (
                   <Link href={notification.link}>
-                    <Button variant="link" size="sm" className="px-0 mt-2">
-                      View Details →
+                    <Button variant="link" size="sm" className="px-0 h-auto text-xs mt-1">
+                      View →
                     </Button>
                   </Link>
                 )}
@@ -145,8 +138,8 @@ export function NotificationsPanel() {
           </div>
         )}
         {notifications.length > 5 && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-4">
-            Showing 5 of {notifications.length} notifications
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-2">
+            Showing 5 of {notifications.length}
           </p>
         )}
       </CardContent>

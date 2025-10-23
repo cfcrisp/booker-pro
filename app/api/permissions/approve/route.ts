@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { isPersonalEmailDomain } from '@/lib/email-domains';
 
 export async function POST(request: NextRequest) {
   const userPayload = getUserFromRequest(request);
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { request_id, permission_type, domain } = await request.json();
     
     // Validate permission type
-    if (!['once', 'user', 'domain'].includes(permission_type)) {
+    if (!['user', 'domain'].includes(permission_type)) {
       return NextResponse.json(
         { error: 'Invalid permission type' },
         { status: 400 }
@@ -41,16 +42,7 @@ export async function POST(request: NextRequest) {
     // Grant the appropriate permission
     let permission;
     
-    if (permission_type === 'once') {
-      // Expires after 7 days (enough time to schedule the meeting)
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 7);
-      permission = await db.permissions.grantOncePermission(
-        userPayload.userId,
-        permissionRequest.requester_id,
-        expiresAt
-      );
-    } else if (permission_type === 'user') {
+    if (permission_type === 'user') {
       permission = await db.permissions.grantUserPermission(
         userPayload.userId,
         permissionRequest.requester_id
@@ -62,6 +54,15 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+      
+      // Prevent granting domain-wide permissions to personal email domains
+      if (isPersonalEmailDomain(`user@${domain}`)) {
+        return NextResponse.json(
+          { error: 'Cannot grant domain-wide permissions to personal email providers like Gmail, Yahoo, etc. Please grant individual user permissions instead.' },
+          { status: 400 }
+        );
+      }
+      
       permission = await db.permissions.grantDomainPermission(
         userPayload.userId,
         domain
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       'permission_granted',
       `${recipient?.name} granted you calendar access`,
       `You can now view ${recipient?.name}'s calendar availability.`,
-      '/find-meeting'
+      '/dashboard'
     );
     
     return NextResponse.json({

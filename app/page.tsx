@@ -1,142 +1,76 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
-import { Calendar, Users, Shield, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
 export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-900 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden flex flex-col transition-colors">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/40 dark:bg-blue-950/40 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-100/40 dark:bg-purple-950/40 rounded-full blur-3xl"></div>
+      </div>
+
       {/* Header */}
-      <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b dark:border-gray-700">
-        <div className="container mx-auto px-4 py-1 flex justify-between items-center">
-          <Link href="/" className="flex items-center">
-            <Image 
-              src="/logo-full.png" 
-              alt="Booker Pro" 
-              width={450} 
-              height={180}
-              className="h-24 w-auto"
-              priority
-            />
+      <nav className="relative z-10 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-800/50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-2.5">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="10" rx="2" className="fill-slate-700 dark:fill-slate-300" />
+              <rect x="18" y="4" width="10" height="10" rx="2" className="fill-slate-500 dark:fill-slate-400" opacity="0.7" />
+              <rect x="4" y="18" width="10" height="10" rx="2" className="fill-slate-500 dark:fill-slate-400" opacity="0.7" />
+              <rect x="18" y="18" width="10" height="10" rx="2" className="fill-slate-400 dark:fill-slate-500" opacity="0.5" />
+            </svg>
+            <span className="text-2xl font-bold text-slate-900 dark:text-slate-50">Booker</span>
           </Link>
           <div className="flex gap-3 items-center">
-            <Button variant="ghost" size="sm" onClick={toggleTheme}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={toggleTheme}
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
             <Link href="/login">
-              <Button>Sign in with Google</Button>
+              <Button className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 border-0">
+                Sign in
+              </Button>
             </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-5xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-          Find Meeting Times Across Organizations
-        </h2>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-          Coordinate schedules effortlessly with granular calendar permissions.
-          Perfect for cross-company collaboration.
-        </p>
-        <Link href="/login">
-          <Button size="lg" className="text-lg px-8 py-6">
-            Get Started with Google
-          </Button>
-        </Link>
-      </div>
-
-      {/* Features */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg dark:border dark:border-gray-700">
-            <Calendar className="w-12 h-12 text-blue-600 dark:text-blue-400 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">Smart Scheduling</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Automatically find times when all participants are available using
-              real-time Google Calendar data.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg dark:border dark:border-gray-700">
-            <Shield className="w-12 h-12 text-blue-600 dark:text-blue-400 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">Permission Control</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Grant one-time, user-specific, or domain-wide calendar access with
-              full control over your privacy.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg dark:border dark:border-gray-700">
-            <Users className="w-12 h-12 text-blue-600 dark:text-blue-400 mb-4" />
-            <h3 className="text-xl font-semibold mb-2 dark:text-gray-100">Cross-Organization</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Schedule meetings with anyone, anywhere. Perfect for client
-              meetings, partnerships, and external collaboration.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div className="bg-white dark:bg-gray-800 py-16 transition-colors">
-        <div className="container mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center mb-12 dark:text-gray-100">How It Works</h3>
-          <div className="max-w-3xl mx-auto space-y-8">
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <h4 className="font-semibold text-lg mb-2 dark:text-gray-100">Sign in with Google</h4>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Connect your Google Calendar securely. Your calendar data stays
-                  private and encrypted.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                2
-              </div>
-              <div>
-                <h4 className="font-semibold text-lg mb-2 dark:text-gray-100">
-                  Request calendar access
-                </h4>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Ask participants for permission to view their availability.
-                  They choose the level of access to grant.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-600 dark:bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                3
-              </div>
-              <div>
-                <h4 className="font-semibold text-lg mb-2 dark:text-gray-100">Find perfect times</h4>
-                <p className="text-gray-600 dark:text-gray-300">
-                  See when everyone is free and schedule your meeting instantly.
-                  No more email chains.
-                </p>
-              </div>
-            </div>
-          </div>
+      <div className="relative z-10 flex-1 flex items-center justify-center">
+        <div className="container mx-auto px-4 text-center max-w-4xl">
+          <h1 className="text-7xl font-bold mb-6 text-slate-900 dark:text-slate-50">
+            Availability Made Easy
+          </h1>
+          <p className="text-2xl text-slate-600 dark:text-slate-400 mb-12 font-light">
+            The fastest way to share calendar availability
+          </p>
+          <Link href="/login">
+            <Button 
+              size="lg" 
+              className="text-lg px-16 py-7 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 border-0 shadow-xl hover:shadow-2xl transition-all"
+            >
+              Sign in with Google
+            </Button>
+          </Link>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 dark:bg-black text-white py-8 transition-colors">
+      <footer className="relative z-10 border-t border-gray-200/50 dark:border-gray-800/50 py-6 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400 dark:text-gray-500">
-            © 2024 Booker. Simplifying cross-organization scheduling.
+          <p className="text-sm text-slate-400 dark:text-slate-600">
+            © 2024 Paragon Labs
           </p>
         </div>
       </footer>
